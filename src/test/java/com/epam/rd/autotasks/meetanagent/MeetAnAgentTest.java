@@ -13,24 +13,24 @@ import java.util.stream.Stream;
 
 public class MeetAnAgentTest {
 
-    @ParameterizedTest
-    @MethodSource("getParameters")
-    public void correctPasswordTest(int userInput, String expected) throws Exception {
+  private static Stream<Arguments> getParameters() {
+    return Stream.of(
+        Arguments.of(PASSWORD, "Hello, Agent"),
+        Arguments.of(PASSWORD + 1, "Access denied"),
+        Arguments.of(PASSWORD + PASSWORD, "Access denied"),
+        Arguments.of(100 + PASSWORD, "Access denied")
+    );
+  }
 
-        String actual = tapSystemOut(
-                () -> withTextFromSystemIn(Integer.toString(userInput))
-                        .execute(() -> MeetAnAgent.main(new String[]{}))
-        );
+  @ParameterizedTest
+  @MethodSource("getParameters")
+  public void correctPasswordTest(int userInput, String expected) throws Exception {
 
-        assertEquals(expected, actual.strip());
-    }
+    String actual = tapSystemOut(
+        () -> withTextFromSystemIn(Integer.toString(userInput))
+            .execute(() -> MeetAnAgent.main(new String[]{}))
+    );
 
-    private static Stream<Arguments> getParameters() {
-        return Stream.of(
-                Arguments.of(PASSWORD, "Hello, Agent"),
-                Arguments.of(PASSWORD + 1, "Access denied"),
-                Arguments.of(PASSWORD + PASSWORD, "Access denied"),
-                Arguments.of(100 + PASSWORD, "Access denied")
-        );
-    }
+    assertEquals(expected, actual.strip());
+  }
 }
